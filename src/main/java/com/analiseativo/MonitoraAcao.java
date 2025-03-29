@@ -1,10 +1,14 @@
 package com.analiseativo;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
@@ -52,8 +56,8 @@ public class MonitoraAcao {
     }
 
     private double getCotacao(String ativo) throws IOException {
-        String url = "https://brapi.dev/api/quote/" + ativo + "?token="+KEY;
-
+        String url = "https://brapi.dev/api/quote/" + ativo + "?token=" + KEY;
+    
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod("GET");
     
@@ -63,8 +67,25 @@ public class MonitoraAcao {
     
         JSONObject json = new JSONObject(response);
         JSONObject stockData = json.getJSONArray("results").getJSONObject(0);
+        double cotacao = stockData.getDouble("regularMarketPrice");
     
-        return stockData.getDouble("regularMarketPrice");
+        salvaCotacaoCSV(ativo, cotacao);
+    
+        return cotacao;
     }
+
+    private void salvaCotacaoCSV(String ativo, double cotacao) {
+    String nomeArquivo = "src/main/resources/cotacoes.csv";
+    LocalDateTime agora = LocalDateTime.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    String timestamp = agora.format(formatter);
+
+    try (FileWriter fw = new FileWriter(nomeArquivo, true);
+         PrintWriter pw = new PrintWriter(fw)) {
+        pw.println(timestamp + "," + ativo + "," + cotacao);
+    } catch (IOException e) {
+        System.err.println("Erro ao salvar cotação no CSV: " + e.getMessage());
+    }
+}
 
 }
