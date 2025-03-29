@@ -26,10 +26,21 @@
             <version>5.2</version>
         </dependency>
         <dependency>
-            <groupId>com.yahoofinance-api</groupId>
-            <artifactId>YahooFinanceAPI</artifactId>
-            <version>3.17.0</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20220320</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+    
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>mail</artifactId>
+        <version>1.5.0-b01</version>
+      </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -50,7 +61,7 @@
                 <version>3.4.0</version>
                 <configuration>
                     <finalName>analise-ativo</finalName>
-                    <appendAssemblyId>false</appendAssemblyId> 
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
