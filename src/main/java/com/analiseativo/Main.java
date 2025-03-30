@@ -15,12 +15,15 @@ public class Main {
             System.out.println("Qual a ação desejada? ");
             ativo = input.nextLine();
             System.out.println("Ação escolhida: " + ativo);
+
             System.out.println("Qual o valor de venda desejado? ");
             precoVenda = Double.parseDouble(input.nextLine());
             System.out.println("Valor de venda: " + precoVenda);
+
             System.out.println("Qual o valor de compra desejado? ");
             precoCompra = Double.parseDouble(input.nextLine());
             System.out.println("Valor de compra: " + precoCompra);
+            
             input.close();
         } else {
             ativo = args[0];
