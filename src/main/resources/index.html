@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Cotações</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        svg {
+            background-color: #f5f5f5;
+        }
+
+        .line {
+            fill: none;
+            stroke-width: 2.5px;
+        }
+
+        .axis-label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Histórico de Cotações</h2>
+    <label for="ativo">Selecione o ativo:</label>
+    <select id="ativo"></select>
+    <div id="grafico"></div>
+    <div class="tooltip"></div>
+
+    <script>
+        const margin = { top: 30, right: 40, bottom: 50, left: 70 },
+            width = 800 - margin.left - margin.right,
+            height = 400 - margin.top - margin.bottom;
+
+        const svg = d3.select("#grafico").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        const tooltip = d3.select(".tooltip");
+
+        d3.csv("cotacoes.csv", d3.autoType).then(data => {
+
+            data.forEach(d => d.data = new Date(d.data));
+
+            const ativos = [...new Set(data.map(d => d.ativo))];
+            const select = d3.select("#ativo");
+            ativos.forEach(ativo => {
+                select.append("option").text(ativo);
+            });
+
+            select.on("change", function () {
+                desenharGrafico(this.value);
+            });
+
+            desenharGrafico(ativos[0]);
+
+            function desenharGrafico(ativoSelecionado) {
+                svg.selectAll("*").remove();
+
+                const dadosFiltrados = data.filter(d => d.ativo === ativoSelecionado);
+
+                const x = d3.scaleTime()
+                    .domain(d3.extent(dadosFiltrados, d => d.data))
+                    .range([0, width]);
+
+                const y = d3.scaleLinear()
+                    .domain([d3.min(dadosFiltrados, d => d.preco) * 0.95, d3.max(dadosFiltrados, d => d.preco) * 1.05])
+                    .range([height, 0]);
+
+                const linha = d3.line()
+                    .x(d => x(d.data))
+                    .y(d => y(d.preco))
+                    .curve(d3.curveMonotoneX);
+
+                svg.append("path")
+                    .datum(dadosFiltrados)
+                    .attr("class", "line")
+                    .attr("d", linha)
+                    .attr("stroke", "#007bff");
+
+                svg.selectAll("circle")
+                    .data(dadosFiltrados)
+                    .enter().append("circle")
+                    .attr("cx", d => x(d.data))
+                    .attr("cy", d => y(d.preco))
+                    .attr("r", 4)
+                    .attr("fill", "#007bff")
+                    .on("mouseover", (event, d) => {
+                        tooltip.style("display", "block")
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 10) + "px")
+                            .text(`R$ ${d.preco.toFixed(2)} - ${d3.timeFormat("%d/%m %H:%M")(d.data)}`);
+                    })
+                    .on("mouseout", () => tooltip.style("display", "none"));
+
+                    svg.append("g")
+                    .attr("transform", `translate(0,${height})`)
+                    .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%d/%m/%Y")));
+
+                svg.append("g").call(d3.axisLeft(y));
+
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("x", width / 2)
+                    .attr("y", height + 40)
+                    .attr("text-anchor", "middle")
+                    .text("Data e Hora");
+
+                svg.append("text")
+                    .attr("class", "axis-label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("x", -height / 2)
+                    .attr("y", -50)
+                    .attr("text-anchor", "middle")
+                    .text("Preço (R$)");
+            }
+        });
+
+    </script>
+</body>
+
+</html>
