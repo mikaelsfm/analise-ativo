@@ -18,11 +18,11 @@ public class Main {
 
             System.out.println("Qual o valor de venda desejado? ");
             precoVenda = Double.parseDouble(input.nextLine());
-            System.out.println("Valor de venda: " + precoVenda);
+            System.out.println("Valor de venda escolhido: " + precoVenda);
 
             System.out.println("Qual o valor de compra desejado? ");
             precoCompra = Double.parseDouble(input.nextLine());
-            System.out.println("Valor de compra: " + precoCompra);
+            System.out.println("Valor de compra escolhido: " + precoCompra);
             
             input.close();
         } else {
