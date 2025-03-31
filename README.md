@@ -47,7 +47,13 @@ Caso prefira, você pode usar variáveis de ambiente no lugar de valores fixos n
    ```sh
    java -jar target/analise-ativo.jar <ATIVO> <VALOR_VENDA> <VALOR_COMPRA>
     ```
+   Caso o sistema seja iniciado sem parâmetros, ele requisita antes de rodar:
 
+    ```sh
+   Qual a ação desejada? 
+   Qual o valor de venda desejado?
+   Qual o valor de compra desejado?
+    ```
 ---
 
 ## Funcionalidades
@@ -55,7 +61,7 @@ Caso prefira, você pode usar variáveis de ambiente no lugar de valores fixos n
 - **Monitoramento de ativos**: Verifica periodicamente as cotações de ações usando a API [brapi.dev](https://brapi.dev).
 - **Envio de alertas por e-mail**: Notifica o usuário quando o preço de compra ou venda é atingido.
 - **Registro de cotações**: Salva as cotações em um arquivo CSV (`src/main/resources/cotacoes.csv`).
-
+- **Histórico visualizado**: Gera um gráfico D3 (`src/main/resources/index.html`) para visualização gráfica do histórico de valores da cotação do ativo.
 ## Estrutura do Código
 
 - **`ConfigLoader`**: Carrega as configurações do arquivo `config.properties` e resolve variáveis de ambiente.
